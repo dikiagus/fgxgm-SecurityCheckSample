@@ -1,13 +1,17 @@
-FROM node:18.17.1
+FROM node:18.20.8-alpine3.21
 
-RUN npm install -g npm@9.1.3
+# Set working directory
+WORKDIR /app
 
-ADD package.json .
-ADD index.js .
-ADD build .
+# Install dependencies first (better caching)
+COPY package*.json ./
+RUN npm install -g npm@9.1.3 && npm install
+
+# Copy source code
 COPY . .
-RUN npm install
 
+# Expose port
 EXPOSE 8080
 
-CMD [ "node", "index.js" ]
+# Run app
+CMD ["node", "index.js"]
